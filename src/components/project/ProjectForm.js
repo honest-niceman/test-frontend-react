@@ -1,5 +1,6 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ProjectForm = () => {
   const [managerList, setManagerList] = useState([]);
@@ -41,6 +42,18 @@ const ProjectForm = () => {
     axios.post('http://localhost:8080/api/v1/project/new', project)
       .then((res) => {
         console.log(res);
+        setProject({
+          name: '',
+          manager: {
+            id: '',
+            name: '',
+          },
+          tasks: [{
+            name: '',
+            startDate: '',
+            endDate: '',
+          }],
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -86,58 +99,84 @@ const ProjectForm = () => {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2 className="text-center my-3">Project</h2>
-      <div className="form-group">
-        <label htmlFor="name">Name:</label>
-        <input type="text" className="form-control"
-               name="name"
-               value={project.name}
-               onChange={handleProjectNameChange}/>
-      </div>
-      <div className="form-group">
-        <label htmlFor="manager">Manager:</label>
-        <select className="form-control" name="manager" value={project.manager.id} onChange={handleManagerChange}>
-          <option value="" disabled>Select a Manager</option>
-          {
-            managerList.length > 0 ? managerList.map((manager) => (
-              <option key={manager.id} value={manager.id}>{manager.name}</option>
-            )) : <option value="" disabled>No Managers Found</option>
-          }
-        </select>
-      </div>
-      <h3 className="my-3">Tasks</h3>
-      {
-        project.tasks.map((task, index) => (
-          <div key={index}>
-            <div className="form-group">
-              <label htmlFor="name">Task Name:</label>
-              <input type="text" className="form-control" name="name" value={task.name}
-                     onChange={(e) => handleTaskChange(e, index)}/>
-            </div>
-            <div className="form-group">
-              <label htmlFor="startDate">
-                Start Date:
-                <input type="date" name="startDate" value={task.startDate}
+    <div className="d-flex justify-content-center mx-auto w-25">
+      <form onSubmit={handleSubmit} className="form-control">
+        <h2 className="text-center my-3">Project</h2>
+        <div className="form-group">
+          <label htmlFor="name"
+                 className="form-label">Name:</label>
+          <input type="text"
+                 className="form-control"
+                 name="name"
+                 placeholder="Please enter a project name"
+                 value={project.name}
+                 onChange={handleProjectNameChange}/>
+        </div>
+        <div className="form-group">
+          <label htmlFor="manager" className="form-label">Manager:</label>
+          <select className="form-select"
+                  name="manager"
+                  value={project.manager.id}
+                  onChange={handleManagerChange}>
+            <option className="dropdown-item" value="" disabled>Select a Manager</option>
+            {
+              managerList.length > 0 ? managerList.map((manager) => (
+                <option key={manager.id} value={manager.id}>{manager.name}</option>
+              )) : <option value="" disabled>No Managers Found</option>
+            }
+          </select>
+        </div>
+        <h3 className="my-3">Tasks</h3>
+        {
+          project.tasks.map((task, index) => (
+            <div key={index}>
+              <div className="form-group">
+                <label htmlFor="name">Task Name:</label>
+                <input type="text" className="form-control" name="name" value={task.name}
                        onChange={(e) => handleTaskChange(e, index)}/>
-              </label>
-              <br/>
-              <label>
-                End Date:
-                <input type="date" name="endDate" value={task.endDate} onChange={(e) => handleTaskChange(e, index)}/>
-              </label>
-              <br/>
-              <button type="button" onClick={() => removeTask(index)}>Remove Task</button>
+              </div>
+              <div className="form-group">
+                <div className="form-group">
+                  <label htmlFor="startDate">Start Date:</label>
+                  <div className="input-group">
+                    <input type="date"
+                           className="form-control"
+                           name="startDate"
+                           value={task.startDate}
+                           onChange={(e) => handleTaskChange(e, index)}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="endDate">End Date:</label>
+                  <div className="input-group">
+                    <input type="date"
+                           className="form-control"
+                           name="endDate"
+                           value={task.endDate}
+                           onChange={(e) => handleTaskChange(e, index)}
+                    />
+                  </div>
+                </div>
+                <br/>
+                <button type="button"
+                        className="btn btn-danger"
+                        onClick={() => removeTask(index)}>Remove Task
+                </button>
+              </div>
             </div>
-          </div>
-        ))
-      }
-      <br/>
-      <button type="button" onClick={addTask}>Add Task</button>
-      <br/>
-      <br/>
-      <button type="submit">Save</button>
-    </form>
+          ))
+        }
+        <br/>
+        <button type="button"
+                className="btn btn-success"
+                onClick={addTask}>Add Task
+        </button>
+        <br/>
+        <br/>
+        <button type="submit" className="btn btn-primary">Save</button>
+      </form>
+    </div>
   );
 }
 
